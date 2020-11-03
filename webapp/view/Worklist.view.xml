@@ -1,0 +1,889 @@
+<mvc:View controllerName="orders.ZSD_ORDERS.controller.Worklist" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.f.semantic"
+	xmlns:core="sap.ui.core" xmlns:table="sap.ui.table" xmlns:viz="sap.viz.ui5.controls" xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+	xmlns:viz.data="sap.viz.ui5.data" xmlns:microchart="sap.suite.ui.microchart" xmlns:commons="sap.suite.ui.commons"
+	xmlns:layout="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Page id="Page1" title="Monitor Blocked Orders and Maintain Status" showHeader="true" titleAlignment="Center">
+		<content>
+			<IconTabBar selectedKey="GR" id="Tbar" stretchContentHeight="true" backgroundDesign="Solid" headerBackgroundDesign="Solid" expand="Rowcount"
+				class="sapUiResponsiveContentPadding">
+				<items>
+					<IconTabSeparator icon="Logo/Wileylogo.GIF"/>
+					<IconTabSeparator icon=" "/>
+					<IconTabSeparator icon=" "/>
+					<IconTabSeparator icon=" "/>
+					<IconTabSeparator icon=" "/>
+					<IconTabFilter text="Overview" icon="sap-icon://area-chart" iconColor="Positive" id="Tab1" key="GR" tooltip="Blocked Orders Overview"
+						class="chartcss">
+						<Label text="" width="70px"/>
+						<Select id="selblock" width="200px" change="BILLGEH">
+							<core:Item key="AL" text="All Blocks"/>
+							<core:Item key="BB" text="Billing Block"/>
+							<core:Item key="DB" text="Delivery Block"/>
+							<core:Item key="CB" text="Credit Block"/>
+							<core:Item key="IO" text="Incomplete Orders"/>
+						</Select>
+						<!--<Select id="selblock1" width="200px" change="BILLGEH" -->
+						<!--items="{/IncompleteSet}">-->
+						<!--	<core:ListItem id="Shiplist" key="{Vbeln}" text="{Vbeln}" />-->
+						<!--</Select>-->
+						<CheckBox id="billt1" text="Billing Blocks" selected="true" select="BILLGEH" visible="false"/>
+						<CheckBox id="delvt1" text="Delivery Blocks" selected="true" select="BILLGEH" visible="false"/>
+						<CheckBox id="overt1" text="Overall Blocks" selected="true" select="BILLGEH" visible="false"/>
+						<CheckBox id="credt1" text="Credit Blocks" selected="true" select="BILLGEH" visible="false"/>
+						<CheckBox id="incot1" text="Incomplete Orders" selected="true" select="BILLGEH" visible="false"/>
+						<layout:BlockLayout visible="true">
+							<layout:content>
+								<layout:BlockLayoutRow >
+									<layout:content>
+										<!--Chart1-->
+										<layout:BlockLayoutCell id="Cellab" visible="true" titleAlignment="Left">
+											<layout:content>
+												<!--<viz:Popover id="idPopOver"></viz:Popover>-->
+												<commons:ChartContainer id="chartContainerdcc" showFullScreen="true" showSelectionDetails="false" enableScroll="false"
+													title="Blocked Orders status" contentChange="onChartContentChange" showZoom="false" showLegendButton="true">
+													<commons:content>
+														<commons:ChartContainerContent icon="sap-icon://line-chart" title="Chart">
+															<commons:content >
+																<viz:Popover id="idPopOver"></viz:Popover>
+																<viz:VizFrame id="idVizFrameo" vizType="donut" uiConfig="{applicationSet:'fiori'}" selectData="onSelectData" height="350px"
+																	vizProperties="{plotArea: { drawingEffect: 'glossy' },title:{visible: false}, dataLabel:{visible:true,showTotal:true,type:'value'}}">
+																	<viz:dataset >
+																		<viz.data:FlattenedDataset id="idVizDataSet" busy="true" data="{path:'Chartdata>/results',startIndex:6}">
+																			<viz.data:dimensions>
+																				<viz.data:DimensionDefinition name="OrderType" value="{Chartdata>Ordtyp}"/>
+																			</viz.data:dimensions>
+																			<viz.data:measures>
+																				<viz.data:MeasureDefinition name="Billing" value="{Chartdata>Faksk}"/>
+																				<viz.data:MeasureDefinition name="Amount" value="{path : 'Chartdata>Vbeln'}"/>
+																			</viz.data:measures>
+																		</viz.data:FlattenedDataset>
+																	</viz:dataset>
+																	<viz:feeds>
+																		<viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Billing"/>
+																		<viz.feeds:FeedItem uid="size" type="Measure" values="Amount"/>
+																		<viz.feeds:FeedItem uid="color" type="Dimension" values="OrderType"/>
+																	</viz:feeds>
+																</viz:VizFrame>
+															</commons:content>
+														</commons:ChartContainerContent>
+														<commons:ChartContainerContent icon="sap-icon://table-view" title="Table">
+															<commons:content>
+																<Table id="chartContainerContentTable" items="{Chartdata>/results}">
+																	<columns>
+																		<Column demandPopin="true">
+																			<Label design="Bold" text="Sales Order"/></Column>
+																		<Column demandPopin="true">
+																			<Label design="Bold" text="Item"/></Column>
+																		<Column demandPopin="true">
+																			<Label design="Bold" text="Price"/></Column>
+																		<Column demandPopin="true">
+																			<Label design="Bold" text="Material"/></Column>
+																	</columns>
+																	<ColumnListItem press="test">
+																		<Text text="{Chartdata>Vbeln}"></Text>
+																		<Text text="{Chartdata>Posnr}"></Text>
+																		<Text text="{Chartdata>Netwr}"></Text>
+																		<Text text="{Chartdata>Matnr}"></Text>
+																	</ColumnListItem>
+																</Table>
+															</commons:content>
+														</commons:ChartContainerContent>
+													</commons:content>
+												</commons:ChartContainer>
+											</layout:content>
+										</layout:BlockLayoutCell>
+										<!--				Chart2-->
+										<layout:BlockLayoutCell id="Cellline" visible="true" backgroundColorShade="ShadeC">
+											<layout:content>
+												<commons:ChartContainer id="piechartcc2" showFullScreen="true" contentChange="onChartContentChange" enableScroll="false"
+													title="Blocked Orders trend">
+													<commons:content>
+														<commons:ChartContainerContent icon="sap-icon://line-chart">
+															<commons:content>
+																<viz:VizFrame id="idVizFrame5" vizProperties="{ title : { text:'Status trend'},dataLabel:{visible:true,showTotal:true} }" vizType='line'
+																	uiConfig="{applicationSet:'fiori'}" selectData="onSelectData2" class="sapuiSmallMargin" height="350px">
+																	<viz:dataset>
+																		<viz.data:FlattenedDataset data="{path:'/Chartdata>/results',startIndex:6}">
+																			<viz.data:dimensions>
+																				<viz.data:DimensionDefinition name="OrderTypes" value="{Chartdata>/Auart}"/>
+																				<viz.data:DimensionDefinition name="Period" value="{Chartdata>/Prodh}"/>
+																			</viz.data:dimensions>
+																			<viz.data:measures>
+																				<viz.data:MeasureDefinition name="Billing" value="{Chartdata>/Faksk}"/>
+																				<viz.data:MeasureDefinition name="Delivery" value="{Chartdata>/Lifsk}"/>
+																				<viz.data:MeasureDefinition name="Credit" value="{Chartdata>/Cmgst}"/>
+																				<viz.data:MeasureDefinition name="Overall" value="{Chartdata>/Gbsta}"/>
+																				<viz.data:MeasureDefinition name="Price" value="{Chartdata>/Netwr}"/>
+																			</viz.data:measures>
+																		</viz.data:FlattenedDataset>
+																	</viz:dataset>
+																	<viz:feeds>
+																		<viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Billing,Delivery,Credit,Price"/>
+																		<viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Period,OrderTypes"/>
+																	</viz:feeds>
+																</viz:VizFrame>
+															</commons:content>
+														</commons:ChartContainerContent>
+													</commons:content>
+												</commons:ChartContainer>
+											</layout:content>
+										</layout:BlockLayoutCell>
+									</layout:content>
+								</layout:BlockLayoutRow>
+							</layout:content>
+						</layout:BlockLayout>
+					</IconTabFilter>
+					<IconTabFilter text="Incomplete" icon="sap-icon://explorer" iconColor="Negative" id="Tab2" key="IC" tooltip="Incomplete Orders">
+						<table:Table id="incomplete" rows="{Incomplete>/results}" rowSelectionChange="rowSelection" visibleRowCount="12" selectionMode="None"
+							alternateRowColors="true" showNoData="false" enableGrouping="true">
+							<!--<headerToolbar>-->
+							<table:extension>
+								<OverflowToolbar>
+									<!--<Button text="" type="Critical" press="RefreshIOEH" icon="sap-icon://synchronize"/>-->
+									<ComboBox id="Iotyp" items="{/OrderTypeSet}" width="150px" placeholder="Order type" showSecondaryValues="true" value="{/comboBoxValue1}"
+										selectedKey="{/comboBoxKey1}">
+										<core:ListItem id="Iotyp1" key="{Auart}" text="{Auart}" additionalText="{Bezei}"/>
+									</ComboBox>
+									<Label text="Date from" textDirection="RTL"/>
+									<DatePicker id="Iosdate" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long" change="handleChange"/>
+									<Label text="-" width="10px"/>
+									<Label text="Date to" textDirection="RTL"/>
+									<DatePicker id="Ioedate" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long" change="handleChange"/>
+								
+									<MultiComboBox id="Inctype" showSecondaryValues="true" width="300px" items="{ path: '/IncTypeSet', sorter: { path: 'Descr' } }" placeholder="Incompletion Type">
+										<core:ListItem id="Inctypec" key="{Fdnam}" text="{Descr}" />
+									</MultiComboBox>
+									
+									<ToolbarSpacer/>
+									<Button text="" type="Emphasized" press="IOREFRESHEH" icon="sap-icon://refresh" tooltip="Refresh Table" ariaLabelledBy="actionButtonLabel"/>
+									<!--<SearchField id="searchField2" tooltip="{Search1}" search="onMainSearch2"></SearchField>-->
+									<!--<Button icon="sap-icon://action-settings" tooltip="Layout Settings" press="onPersoButtonPressed"/>-->
+								</OverflowToolbar>
+							</table:extension>
+							<table:Column width="110px" id="Iordtype" sortProperty="Vbeln" filterProperty="Vbeln">
+								<table:label>
+									<Label text="Sales Order "/>
+								</table:label>
+								<table:template>
+									<Link text="{Incomplete>Vbeln}" href="{Incomplete>Linkref}" target="_blank"/>
+								</table:template>
+							</table:Column >
+							<table:Column width="100px" id="Iordd" sortProperty="" filterProperty="">
+								<table:label>
+									<Label text="Order Items"/>
+								</table:label>
+								<table:template>
+									<Button text="Show Items" press="IitemsEH" type="Default"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="120px" id="Iitemlist" sortProperty="" filterProperty="">
+								<table:label>
+									<Label text="Incomplete List"/>
+								</table:label>
+								<table:template>
+									<Button text="Show List" press="IitemlistEH" type="Accept"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="100px" id="iauart" sortProperty="Auart" filterProperty="Auart">
+								<table:label>
+									<Label text="Order Type"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Auart}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="120px" id="ikunnr" sortProperty="Kunnr" filterProperty="Kunnr">
+								<table:label>
+									<Label text="Sold-to Party"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Kunnr}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="138px" id="ierdat" sortProperty="Stdate" filterProperty="Stdate">
+								<table:label>
+									<Label text="Created on"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Erdat}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="80px" id="ivkorg" sortProperty="Vkorg" filterProperty="Vkorg">
+								<table:label>
+									<Label text="Sales Org"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Vkorg}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="100px" id="ivtweg" sortProperty="Vtweg" filterProperty="Vtweg">
+								<table:label>
+									<Label text="Dist Channel"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Vtweg}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="80px" id="ispart" sortProperty="Spart" filterProperty="Spart">
+								<table:label>
+									<Label text="Division"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>SPart}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="80px" id="ibsark" sortProperty="Bsark" filterProperty="Bsark">
+								<table:label>
+									<Label text="PO Type"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Bsark}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="100px" id="iNetwr" sortProperty="Netwr" filterProperty="Netwr">
+								<table:label>
+									<Label text="Net Value"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Netwr}"/>
+								</table:template>
+							</table:Column>
+							<table:Column width="70px" id="iwaerk" sortProperty="Waerk" filterProperty="Waerk">
+								<table:label>
+									<Label text="Curr Key"/>
+								</table:label>
+								<table:template>
+									<Label text="{Incomplete>Waerk}"/>
+								</table:template>
+							</table:Column>
+							<!--<table:Column width="130px" id="ifehgr" sortProperty="Fehgr" filterProperty="Fehgr">-->
+							<!--	<table:label>-->
+							<!--		<Label text="Incompletion Log"/>-->
+							<!--	</table:label>-->
+							<!--	<table:template>-->
+							<!--		<Label text="{Incomplete>Fehgr}"/>-->
+							<!--	</table:template>-->
+							<!--</table:Column>-->
+						</table:Table>
+					</IconTabFilter>
+					<IconTabFilter text="Deliver Block" iconColor="Critical" icon="sap-icon://error" id="Tab3" key="DB" class="styleclass4">
+						<content press="delivWEH">
+							<table:Table id="delv" rows="{Delivery>/results}" rowSelectionChange="rowSelection" visibleRowCount="12" selectionMode="MultiToggle"
+								showNoData="false" enableGrouping="true" alternateRowColors="true">
+								<!--<headerToolbar>-->
+								<table:extension>
+									<OverflowToolbar>
+										<!--<Button type="Emphasized" press="UnblockDLWEH" icon="sap-icon://unlocked" tooltip="Release Block"/>-->
+										<Button type="Emphasized" press="UpdateDLWEH" icon="sap-icon://unlocked" tooltip="Release Delivery Block" visible="true"/>
+										<Label text="Sold-to Party" textDirection="RTL"/>
+										<MultiInput showValueHelp="true" id="Dso" width="200px" valueHelpRequest="onHelpRequestDSO"
+										tokenUpdate = "DsoChange" suggestionItemSelected="onSuggestionDSO" valueHelpOnly="true"
+										showSuggestion="false" >
+							
+										</MultiInput>
+										<!--<MultiInput id="Dso1" showSuggestion="false" showValueHelp="true" valueHelpRequest="onDorderHelpRequest" width="185px"-->
+										<!--	tokenUpdate="DorderChange" suggestionItemSelected="onSuggestionDorder" valueHelpOnly="true" visible="false" placeholder="Click for Orders"></MultiInput>-->
+										<!--<MultiInput id="Dotypx" showSuggestion="false" showValueHelp="true" valueHelpRequest="onDotypHelpRequest" width="185px"-->
+										<!--	tokenUpdate="DotypChange" suggestionItemSelected="onSuggestionDotyp" valueHelpOnly="true" placeholder="Click for Order types">-->
+										<!--</MultiInput>-->
+										<!--<ComboBox id="Dso" width="150px" selectionChange="DsoEH" placeholder="Order number" items="{path : 'Delivery>/results'}"-->
+										<!--	value="{/comboBoxValue}" selectedKey="{/comboBoxKey}">-->
+										<!--	<core:ListItem id="dsolist" key="{Delivery>Vbeln}" text="{Delivery>Vbeln}" additionalText="{Delivery>Vbeln}"/>-->
+										<!--</ComboBox>-->
+										<!--selectionChange="DsoEH" -->
+										<Label text="Order Type" textDirection="RTL"/>
+										<ComboBox id="Dotyp" items="{/OrderTypeSet}" width="150px" showSecondaryValues="true" value="{/comboBoxValue1}"
+											selectedKey="{/comboBoxKey1}">
+											<core:ListItem id="Dotypl" key="{Auart}" text="{Auart}" additionalText="{Bezei}"/>
+										</ComboBox>
+										<Label text="Date from" textDirection="RTL"/>
+										<DatePicker id="sdated" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long" change="handleChange"/>
+										<Label text="-" width="10px"/>
+										<Label text="Date to" textDirection="RTL"/>
+										<DatePicker id="edated" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long" change="handleChange"/>
+										<ToolbarSpacer/>
+										<Button text="" type="Emphasized" press="DELVREFRESHWEH" icon="sap-icon://refresh" tooltip="Refresh Table"
+											ariaLabelledBy="actionButtonLabel"/>
+										<Button id="refreshTabd" icon="sap-icon://refresh" tooltip="Refresh Data" press="Refreshd" type="Emphasized" visible="false"/>
+										<!--<SearchField id="searchField2" tooltip="{Search1}" search="onMainSearch2"></SearchField>-->
+										<!--<Button icon="sap-icon://action-settings" tooltip="Layout Settings" press="onPersoButtonPressed"/>-->
+									</OverflowToolbar>
+								</table:extension>
+								<!--<table:footer>-->
+								<!--	<OverflowToolbar>-->
+										<!--<Button type="Critical" press="ErrorsDEH" icon="sap-icon://message-popup" tooltip="Errors" visible="true"/>-->
+								<!--	</OverflowToolbar>-->
+								<!--</table:footer>-->
+								<table:Column width="100px" id="dordtype" sortProperty="Vbeln" filterProperty="Vbeln">
+									<table:label>
+										<Label text="Order "/>
+									</table:label>
+									<table:template>
+										<Link text="{Delivery>Vbeln}" href="{Delivery>Linkref}" target="_blank"/>
+									</table:template>
+								</table:Column >
+								<table:Column width="100px" id="ordd" sortProperty="" filterProperty="">
+									<table:label>
+										<Label text="Order Items"/>
+									</table:label>
+									<table:template>
+										<Button text="Show Items" press="DitemsEH" type="Accept"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Dkunnr" sortProperty="Kunnr" filterProperty="Kunnr">
+									<table:label>
+										<Label text="Sold-to Party"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Kunnr}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="Dtype" sortProperty="Auart" filterProperty="Auart">
+									<table:label>
+										<Label text="Order Type"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Auart}"/>
+									</table:template>
+								</table:Column>
+								<!--<table:Column width="100px" id="Dlifsk" sortProperty="lifsk" filterProperty="Lifsk">-->
+								<!--	<table:label>-->
+								<!--		<Label text="Delivery Block"/>-->
+								<!--	</table:label>-->
+								<!--	<table:template>-->
+								<!--		<Label text="{Delivery>Lifsk}"/>-->
+								<!--	</table:template>-->
+								<!--</table:Column>-->
+								<table:Column width="80px" id="Dvkorg" sortProperty="Vkorg" filterProperty="Vkorg">
+									<table:label>
+										<Label text="Sales Org"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Vkorg}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Dvtweg" sortProperty="Vtweg" filterProperty="Vtweg">
+									<table:label>
+										<Label text="Dist Channel"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Vtweg}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="Dspart" sortProperty="Spart" filterProperty="Spart">
+									<table:label>
+										<Label text="Division"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Spart}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Dvkbur" sortProperty="Vkbur" filterProperty="Vkbur">
+									<table:label>
+										<Label text="Sale office"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Vkbur}"/>
+									</table:template>
+								</table:Column>
+								<!--<table:Column width="100px" id="Dvkgrp" sortProperty="Vkgrp" filterProperty="Vkgrp">-->
+								<!--	<table:label>-->
+								<!--		<Label text="Sale Group"/>-->
+								<!--	</table:label>-->
+								<!--	<table:template>-->
+								<!--		<Label text="{Delivery>Vkgrp}"/>-->
+								<!--	</table:template>-->
+								<!--</table:Column>-->
+								<table:Column width="100px" id="DKnetwr" sortProperty="Knetwr" filterProperty="Knetwr">
+									<table:label>
+										<Label text="Net Value"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Knetwr}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="Dwaerk" sortProperty="Waerk" filterProperty="Waerk">
+									<table:label>
+										<Label text="Curr Key"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Waerk}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="144px" id="Derdat" sortProperty="Erdat" filterProperty="Erdat">
+									<table:label>
+										<Label text="Created on"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Erdat}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Dernam" sortProperty="Ernam" filterProperty="Ernam">
+									<table:label>
+										<Label text="Created by"/>
+									</table:label>
+									<table:template>
+										<Label text="{Delivery>Ernam}"/>
+									</table:template>
+								</table:Column>
+							</table:Table>
+						</content>
+					</IconTabFilter>
+					<IconTabFilter text="Billing Block" iconColor="Negative" icon="sap-icon://alert" id="Tab4" key="BB" class="styleclass4">
+						<content press="billingWEH">
+							<table:Table id="bill" rows="{Billing>/results}" rowSelectionChange="rowSelection" visibleRowCount="12" selectionMode="MultiToggle"
+								showNoData="false" enableGrouping="true" alternateRowColors="true">
+								<!--<headerToolbar>-->
+								<table:extension>
+									<OverflowToolbar>
+										<Button type="Emphasized" press="UnblockBBWEH" icon="sap-icon://unlocked" tooltip="Release Block" visible="false"/>
+										<Button type="Emphasized" press="UpdateBBWEH" icon="sap-icon://unlocked" tooltip="Release Block" visible="true"/>
+										<!--<Button width="100px" icon="sap-icon://unlocked" tooltip="Release Block" press="UnblockBBWEH" type="Accept"/>-->
+										<!--<MultiInput id="Bso" showSuggestion="false" showValueHelp="true" valueHelpRequest="onBorderHelpRequest" width="185px"-->
+										<!--	tokenUpdate="BorderChange" suggestionItemSelected="onSuggestionBorder" valueHelpOnly="true" placeholder="Value Help for Orders">-->
+										<!--</MultiInput>-->
+										<!--<MultiInput id="Botyp2" showSuggestion="false" showValueHelp="true" valueHelpRequest="onBotypHelpRequest" width="185px"-->
+										<!--	tokenUpdate="BotypChange" suggestionItemSelected="onSuggestionBotyp" valueHelpOnly="true" placeholder="Value Help for Order types"></MultiInput>-->
+										<ComboBox id="Bso2" width="150px" selectionChange="BsoEH" placeholder="Order number" items="{path : 'Billing>/results'}"
+											value="{/comboBoxValue}" selectedKey="{/comboBoxKey}" visible="false">
+											<core:ListItem id="bsolist" key="{Billing>Vbeln}" text="{Billing>Vbeln}" additionalText="{Billing>Vbeln}"/>
+										</ComboBox>
+										<ComboBox id="Botyp" items="{/OrderTypeSet}" width="150px" placeholder="Order type" showSecondaryValues="true" value="{/comboBoxValue1}"
+											selectedKey="{/comboBoxKey1}" visible="true">
+											<core:ListItem id="botypl" key="{Auart}" text="{Auart}" additionalText="{Bezei}"/>
+										</ComboBox>
+										<Label text="Date from" textDirection="RTL"/>
+										<DatePicker id="Bsdate" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long"/>
+										<Label text="-" width="10px"/>
+										<Label text="Date to" textDirection="RTL"/>
+										<DatePicker id="Bedate" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long"/>
+										<ToolbarSpacer/>
+										<Button id="refreshTab" icon="sap-icon://refresh" tooltip="Refresh Table" press="BillRefreshEH" type="Emphasized" visible="true"/>
+										<!--<SearchField id="searchField1" tooltip="{Search1}" search="onMainSearch"></SearchField>-->
+										<!--<Button icon="sap-icon://action-settings" tooltip="Layout Settings" press="onPersoButtonPressed"/>-->
+									</OverflowToolbar>
+								</table:extension>
+								<table:Column width="100px" id="ordtype" sortProperty="Vbeln" filterProperty="Vbeln">
+									<table:label>
+										<Label text="Order "/>
+									</table:label>
+									<table:template>
+										<Link text="{Billing>Vbeln}" href="{Billing>Linkref}" target="_blank"/>
+									</table:template>
+								</table:Column >
+								<table:Column width="100px" id="ord" sortProperty="" filterProperty="">
+									<table:label>
+										<Label text="Order Items"/>
+									</table:label>
+									<table:template>
+										<Button text="Show Items" press="BitemsEH" type="Accept"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="Btype" sortProperty="Auart" filterProperty="Auart">
+									<table:label>
+										<Label text="Order Type"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Auart}"/>
+									</table:template>
+								</table:Column>
+								<!--<table:Column width="100px" id="Bfaksk" sortProperty="Faksk" filterProperty="Faksk">-->
+								<!--	<table:label>-->
+								<!--		<Label text="Billing Block"/>-->
+								<!--	</table:label>-->
+								<!--	<table:template>-->
+								<!--		<Label text="{Billing>Faksk}"/>-->
+								<!--	</table:template>-->
+								<!--</table:Column>-->
+								<table:Column width="80px" id="Bvkorg" sortProperty="Vkorg" filterProperty="Vkorg">
+									<table:label>
+										<Label text="Sales Org"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Vkorg}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Bvtweg" sortProperty="Vtweg" filterProperty="Vtweg">
+									<table:label>
+										<Label text="Dist Channel"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Vtweg}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="Bspart" sortProperty="Spart" filterProperty="Spart">
+									<table:label>
+										<Label text="Division"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Spart}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Bvkbur" sortProperty="Vkbur" filterProperty="Vkbur">
+									<table:label>
+										<Label text="Sale office"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Vkbur}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Bkunnr" sortProperty="Kunnr" filterProperty="Kunnr">
+									<table:label>
+										<Label text="Sold-to Party"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Kunnr}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="BKnetwr" sortProperty="Knetwr" filterProperty="Knetwr">
+									<table:label>
+										<Label text="Net Value"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Knetwr}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="Bwaerk" sortProperty="Waerk" filterProperty="Waerk">
+									<table:label>
+										<Label text="Curr Key"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Waerk}"/>
+									</table:template>
+								</table:Column>
+								<!--<table:Column width="100px" id="Bbsark" sortProperty="Bsark" filterProperty="Bsark">-->
+								<!--	<table:label>-->
+								<!--		<Label text="PO Type"/>-->
+								<!--	</table:label>-->
+								<!--	<table:template>-->
+								<!--		<Label text="{Billing>Bsark}"/>-->
+								<!--	</table:template>-->
+								<!--</table:Column>-->
+								<table:Column width="145px" id="Berdat" sortProperty="Erdat" filterProperty="Erdat">
+									<table:label>
+										<Label text="Created on"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Erdat}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="Bernam" sortProperty="Ernam" filterProperty="Ernam">
+									<table:label>
+										<Label text="Created by"/>
+									</table:label>
+									<table:template>
+										<Label text="{Billing>Ernam}"/>
+									</table:template>
+								</table:Column>
+							</table:Table>
+						</content>
+					</IconTabFilter>
+					<IconTabFilter text="Credit Block" iconColor="Neutral" icon="sap-icon://locked" id="Tab5" key="CB" count="{/CreditSet>/length}">
+						<content press="creditWEH">
+							<!--<ComboBox id="cso" width="180px" selectionChange="CsoEH" placeholder="Order number" items="{path : 'Credit>/results'}"-->
+							<!--	value="{/comboBoxValue}" selectedKey="{/comboBoxKey}">-->
+							<!--	<core:ListItem id="csolist" key="{Credit>Vbeln}" text="{Credit>Vbeln}" additionalText="{Credit>Vbeln}"/>-->
+							<!--</ComboBox>-->
+							<!--<ComboBox id="cotyp" items="{/OrderTypeSet}" width="250px" placeholder="Order type" selectionChange="CsoEH" showSecondaryValues="true"-->
+							<!--	value="{/comboBoxValue1}" selectedKey="{/comboBoxKey1}">-->
+							<!--	<core:ListItem id="cotypl" key="{Auart}" text="{Auart}" additionalText="{Bezei}"/>-->
+							<!--</ComboBox>-->
+							<!--<Button text="Unblock" type="Accept" width="100px" press="UnblockCBWEH"/>-->
+							<!--<Table id="credit1" mode="MultiSelect" items="{Credit>/results}" fixedLayout="false" growing="true" growingThreshold="10"-->
+							<!--	selectionChange="onCreditSel" class="styleclass4" showNoData="false" visible="false">-->
+							<!--	<columns>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Order No."/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Order Items"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Order Type"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Material Number" width="100px"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Credit Block"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Order Price"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Currency"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Quantity"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="UoM"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Sales Org"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Dist Channel"/>-->
+							<!--		</Column>-->
+							<!--		<Column>-->
+							<!--			<Label design="Bold" text="Division"/>-->
+							<!--		</Column>-->
+							<!--	</columns>-->
+							<!--	<items>-->
+							<!--		<ColumnListItem>-->
+							<!--			<cells>-->
+							<!--				<Link text="{Credit>Vbeln}" href="{Credit>Linkref}" target="_blank"/>-->
+							<!--				<Button text="Show Items" press="CitemsEH" type="Emphasized"/>-->
+											<!--<Text text="{Credit>Posnr}"/>-->
+							<!--				<Text text="{Credit>Auart}"/>-->
+							<!--				<Text text="{Credit>Matnr}"/>-->
+							<!--				<Text text="{Credit>Cmgst}"/>-->
+							<!--				<Text text="{Credit>Netwr}"/>-->
+							<!--				<Text text="{Credit>Waerk}"/>-->
+							<!--				<Text text="{Credit>Zmeng}"/>-->
+							<!--				<Text text="{Credit>Meins}"/>-->
+							<!--				<Text text="{Credit>Vkorg}"/>-->
+							<!--				<Text text="{Credit>Vtweg}"/>-->
+							<!--				<Text text="{Credit>Spart}"/>-->
+							<!--			</cells>-->
+							<!--		</ColumnListItem>-->
+							<!--	</items>-->
+							<!--</Table>-->
+						
+							<table:Table id="credit" rows="{Credit>/results}" rowSelectionChange="rowSelection" visibleRowCount="12" selectionMode="MultiToggle"
+								showNoData="false" enableGrouping="true" visible="true" alternateRowColors="true">
+								<!--<headerToolbar>-->
+								<table:extension>
+									<OverflowToolbar>
+										<!--<Button type="Emphasized" press="UnblockBBWEH" icon="sap-icon://unlocked" tooltip="Release Block" visible="false"/>-->
+										<Button type="Emphasized" press="UpdateCBWEH" icon="sap-icon://unlocked" tooltip="Release Block" visible="true"/>
+										<!--<Button width="100px" icon="sap-icon://unlocked" tooltip="Release Block" press="UnblockBBWEH" type="Accept"/>-->
+										<!--<MultiInput id="Bso" showSuggestion="false" showValueHelp="true" valueHelpRequest="onBorderHelpRequest" width="185px"-->
+										<!--	tokenUpdate="BorderChange" suggestionItemSelected="onSuggestionBorder" valueHelpOnly="true" placeholder="Value Help for Orders">-->
+										<!--</MultiInput>-->
+										<!--<MultiInput id="Botyp2" showSuggestion="false" showValueHelp="true" valueHelpRequest="onBotypHelpRequest" width="185px"-->
+										<!--	tokenUpdate="BotypChange" suggestionItemSelected="onSuggestionBotyp" valueHelpOnly="true" placeholder="Value Help for Order types"></MultiInput>-->
+										<!--<ComboBox id="Cso2" width="150px" selectionChange="BsoEH" placeholder="Order number" items="{path : 'Credit>/results'}"-->
+										<!--	value="{/comboBoxValue}" selectedKey="{/comboBoxKey}" visible="false">-->
+										<!--	<core:ListItem id="cbsolist" key="{Credit>Vbeln}" text="{Credit>Vbeln}" additionalText="{Credit>Vbeln}"/>-->
+										<!--</ComboBox>-->
+										<ComboBox id="cotyp" items="{/OrderTypeSet}" width="150px" placeholder="Order type" showSecondaryValues="true" value="{/comboBoxValue1}"
+											selectedKey="{/comboBoxKey1}" visible="true">
+											<core:ListItem id="cbotypl" key="{Auart}" text="{Auart}" additionalText="{Bezei}"/>
+										</ComboBox>
+										<Label text="Date from" textDirection="RTL"/>
+										<DatePicker id="Csdate" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long"/>
+										<Label text="-" width="10px"/>
+										<Label text="Date to" textDirection="RTL"/>
+										<DatePicker id="Cedate" value="" width="180px" valueFormat="yyyy-MM-dd" displayFormat="long"/>
+										<ToolbarSpacer/>
+										<Button id="crefreshTab" icon="sap-icon://refresh" tooltip="Refresh Table" press="CreditRefreshEH" type="Emphasized" visible="true"/>
+										<!--<SearchField id="searchField1" tooltip="{Search1}" search="onMainSearch"></SearchField>-->
+										<!--<Button icon="sap-icon://action-settings" tooltip="Layout Settings" press="onPersoButtonPressed"/>-->
+									</OverflowToolbar>
+								</table:extension>
+								<table:Column width="100px" id="cordtype" sortProperty="Vbeln" filterProperty="Vbeln">
+									<table:label>
+										<Label text="Order "/>
+									</table:label>
+									<table:template>
+										<Link text="{Credit>Vbeln}" href="{Credit>Linkref}" target="_blank"/>
+									</table:template>
+								</table:Column >
+								<table:Column width="100px" id="cord" sortProperty="" filterProperty="">
+									<table:label>
+										<Label text="Order Items"/>
+									</table:label>
+									<table:template>
+										<Button text="Show Items" press="CitemsEH" type="Accept"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="ctype" sortProperty="Auart" filterProperty="Auart">
+									<table:label>
+										<Label text="Order Type"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Auart}"/>
+									</table:template>
+								</table:Column>
+								<!--<table:Column width="100px" id="Bfaksk" sortProperty="Faksk" filterProperty="Faksk">-->
+								<!--	<table:label>-->
+								<!--		<Label text="Billing Block"/>-->
+								<!--	</table:label>-->
+								<!--	<table:template>-->
+								<!--		<Label text="{Billing>Faksk}"/>-->
+								<!--	</table:template>-->
+								<!--</table:Column>-->
+								<table:Column width="80px" id="Cvkorg" sortProperty="Vkorg" filterProperty="Vkorg">
+									<table:label>
+										<Label text="Sales Org"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Vkorg}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="cvtweg" sortProperty="Vtweg" filterProperty="Vtweg">
+									<table:label>
+										<Label text="Dist Channel"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Vtweg}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="cspart" sortProperty="Spart" filterProperty="Spart">
+									<table:label>
+										<Label text="Division"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Spart}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="cvkbur" sortProperty="Vkbur" filterProperty="Vkbur">
+									<table:label>
+										<Label text="Sale office"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Vkbur}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="ckunnr" sortProperty="Kunnr" filterProperty="Kunnr">
+									<table:label>
+										<Label text="Sold-to Party"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Kunnr}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="cKnetwr" sortProperty="Knetwr" filterProperty="Knetwr">
+									<table:label>
+										<Label text="Net Value"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Knetwr}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="80px" id="cwaerk" sortProperty="Waerk" filterProperty="Waerk">
+									<table:label>
+										<Label text="Curr Key"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Waerk}"/>
+									</table:template>
+								</table:Column>
+								<!--<table:Column width="100px" id="Bbsark" sortProperty="Bsark" filterProperty="Bsark">-->
+								<!--	<table:label>-->
+								<!--		<Label text="PO Type"/>-->
+								<!--	</table:label>-->
+								<!--	<table:template>-->
+								<!--		<Label text="{Billing>Bsark}"/>-->
+								<!--	</table:template>-->
+								<!--</table:Column>-->
+								<table:Column width="145px" id="cerdat" sortProperty="Erdat" filterProperty="Erdat">
+									<table:label>
+										<Label text="Created on"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Erdat}"/>
+									</table:template>
+								</table:Column>
+								<table:Column width="100px" id="cernam" sortProperty="Ernam" filterProperty="Ernam">
+									<table:label>
+										<Label text="Created by"/>
+									</table:label>
+									<table:template>
+										<Label text="{Credit>Ernam}"/>
+									</table:template>
+								</table:Column>
+							</table:Table>
+						</content>
+					</IconTabFilter>
+					<IconTabFilter text="Dummy" icon="sap-icon://activate" id="dummy1" key="DM1" visible="false">
+						<Label text="Dummy"/>
+						<!--<table:Table id="table12" rows="{Credit>/results}" rowSelectionChange="rowSelection" visibleRowCount="10" selectionMode="MultiToggle"-->
+						<!--			showNoData="false" enableGrouping="true" >-->
+						<!--<headerToolbar>-->
+						<!--			<table:extension>-->
+						<!--				<OverflowToolbar>-->
+						<!--					<Button width="100px" icon="sap-icon://cart-approval" tooltip="Process" press="processEH" type="Accept"/>-->
+						<!--					<ToolbarSpacer/>-->
+						<!--					<Button id="refreshTab" icon="sap-icon://refresh" tooltip="Refresh Table" press="Refresh" type="Emphasized" visible="true"/>-->
+						<!--					<SearchField id="searchField1" tooltip="{Search1}" search="onMainSearch">-->
+						<!--					</SearchField>-->
+						<!--					<Button icon="sap-icon://action-settings" tooltip="Layout Settings" press="onPersoButtonPressed" />-->
+						<!--				</OverflowToolbar>-->
+						<!--			</table:extension>-->
+						<!--			<table:Column width="80px" id="ordtype" sortProperty="Auart" filterProperty="Auart">-->
+						<!--				<table:label>-->
+						<!--					<Label text="Order Type"/>-->
+						<!--				</table:label>-->
+						<!--				<table:template>-->
+						<!--					<Label text="{tp>Auart}"/>-->
+						<!--				</table:template>-->
+						<!--			</table:Column >-->
+						<!--			<table:Column width="100px" id="relord" sortProperty="RelOrder" filterProperty="RelOrder">-->
+						<!--				<table:label>-->
+						<!--					<Label text="Release Order"/>-->
+						<!--				</table:label>-->
+						<!--				<table:template>-->
+						<!--					<Label text="{tp>RelOrder}"/>-->
+						<!--				</table:template>-->
+						<!--			</table:Column>-->
+						<!--			<table:Column width="100px" id="relitem" sortProperty="RelItem" filterProperty="RelItem">-->
+						<!--				<table:label>-->
+						<!--					<Label text="Order Item"/>-->
+						<!--				</table:label>-->
+						<!--				<table:template>-->
+						<!--					<Label text="{tp>RelItem}"/>-->
+						<!--				</table:template>-->
+						<!--			</table:Column>-->
+						<!--			<table:Column width="160px" id="media" sortProperty="Ismidentcode" filterProperty="Ismidentcode">-->
+						<!--				<table:label>-->
+						<!--					<Label text="Media Issue"/>-->
+						<!--				</table:label>-->
+						<!--				<table:template>-->
+						<!--					<Label text="{tp>Ismidentcode}"/>-->
+						<!--				</table:template>-->
+						<!--			</table:Column >-->
+						<!--		</table:Table>-->
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<Table id="table" width="auto" items="{ path: '/BillingBlockSet1', sorter: { path: 'Arktx', descending: false } }"
+				noDataText="{worklistView>/tableNoDataText}" busyIndicatorDelay="{worklistView>/tableBusyDelay}" growing="true" growingScrollToLoad="true"
+				updateFinished=".onUpdateFinished" visible="false">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title id="tableHeader" text="{worklistView>/worklistTableTitle}" level="H3"/>
+						<ToolbarSpacer/>
+						<SearchField id="searchField" tooltip="{i18n>worklistSearchTooltip}" search=".onSearch">
+							<layoutData>
+								<OverflowToolbarLayoutData maxWidth="200px" priority="NeverOverflow"/>
+							</layoutData>
+						</SearchField>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column id="nameColumn">
+						<Text text="{i18n>tableNameColumnTitle}" id="nameColumnTitle"/>
+					</Column>
+					<Column id="unitNumberColumn" hAlign="End">
+						<Text text="{i18n>tableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" press=".onPress">
+						<cells>
+							<ObjectIdentifier title="{Arktx}"/>
+							<ObjectNumber number="{ path: 'Netwr', formatter: '.formatter.numberUnit' }" unit="{Waerk}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+	<!--	</semantic:content>-->
+	<!--	<semantic:sendEmailAction>-->
+	<!--		<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>-->
+	<!--	</semantic:sendEmailAction>-->
+	<!--</semantic:SemanticPage>-->
+</mvc:View>

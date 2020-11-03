@@ -1,0 +1,52 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="orders.ZSD_ORDERS.controller.Worklist">
+
+	<Dialog resizable="true" draggable="true" contentWidth="1250px">
+		<content>
+			<Table items="{Dmsg>/NP_VBELN/results}" id="myTabledi" growing="true" growingThreshold="100" 
+			       	selectionChange="rowSelectionord" >
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Link text="{Dmsg>Vbeln}" href="{Dmsg>Linkref}" target="_blank"/>
+							<Text text="{Dmsg>Msgty}"/>
+							<Text text="{Dmsg>Msg1}"/>
+							<Text text="{Dmsg>Msg2}"/>
+							<Text text="{Dmsg>Msg3}"/>
+							<Text text="{Dmsg>Msg4}"/>
+							<!--<Text text="{Dmsg>Posnr}"/>-->
+							<!--<Text text="{Iitems>Matnr}"/>-->
+							<!--<Text text="{Iitems>Arktx}"/>-->
+							<!--<Text text="{Iitems>Zmeng}"/>-->
+							<!--<Text text="{Iitems>Meins}"/>-->
+						</cells>
+					</ColumnListItem>
+				</items>
+				<columns>
+					<Column width="100px">
+						<Label text="Order"/>
+					</Column>
+					<Column width="120px">
+						<Label text="Message Type"/>
+					</Column>
+
+					<Column width="250px">
+						<Label text="Message1"/>
+					</Column>
+					<Column width="250px">
+						<Label text="Mmessage2"/>
+					</Column>
+					<Column width="250px">
+						<Label text="Message3"/>
+					</Column>	
+					<Column width="250px">
+						<Label text="Message4"/>
+					</Column>					
+				</columns>
+			</Table>
+
+			</content>
+			<endButton text="test">
+				<Button icon="sap-icon://sys-cancel" press="cancelItemDI" type="Reject" tooltip="close"/>
+			</endButton>
+		</Dialog>
+	</core:FragmentDefinition>

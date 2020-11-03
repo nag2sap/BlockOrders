@@ -1,0 +1,37 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="orders.ZSD_ORDERS.controller.Worklist">
+
+	<Dialog resizable="true" draggable="true" contentWidth="455px">
+		<content>
+			<Table items="{Iitems>/results}" id="TableIL" growing="true" growingThreshold="100" 
+			       	selectionChange="rowSelectionord" >
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Link text="{Iitems>Vbeln}" href="{Iitems>Linkref}" target="_blank"/>
+							<Text text="{Iitems>Posnr}"/>
+							<Text text="{Iitems>Missing}"/>
+					
+						</cells>
+					</ColumnListItem>
+				</items>
+				<columns>
+					<Column width="100px">
+						<Label text="Sales Order"/>
+					</Column>
+					<Column width="100px">
+						<Label text="Header/Item"/>
+					</Column>
+
+					<Column width="250px">
+						<Label text="Missing Data"/>
+					</Column>
+	
+				</columns>
+			</Table>
+
+			</content>
+			<endButton text="test">
+				<Button icon="sap-icon://sys-cancel" press="cancelItemIL" type="Reject" tooltip="close"/>
+			</endButton>
+		</Dialog>
+	</core:FragmentDefinition>

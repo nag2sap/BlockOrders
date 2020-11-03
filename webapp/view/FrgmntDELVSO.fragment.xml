@@ -1,0 +1,63 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="orders.ZSD_ORDERS.controller.Worklist">
+
+	<Dialog resizable="true" draggable="true" contentWidth="700px">
+		<content>
+			<Toolbar>
+				<OverflowToolbar>
+					<SearchField id="mySearch" search="searchEH" width="270px"/>
+				</OverflowToolbar>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://clear-filter" press="clearDelvSO" type="Accept" tooltip="Clear Selected Orders" width="80px"/>
+			</Toolbar>
+				<Panel id="dsoPanel" expandable="true" expanded="true" headerText="Selected Items">
+				<Table items="{Dsosel>/}" id="DSOselTable" growing="true" mode="Delete"
+				delete="deleteSelectionDso" showNoData="false" >
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{Dsosel>Kunnr}"/>
+							</cells>
+						</ColumnListItem>
+						</items>
+						<columns>
+							<Column width="150px">
+								<!--<Label text=" test"/>-->
+							</Column>
+						</columns>
+					</Table>
+				</Panel>
+			<Table items="{/DSoSet}" id="DelvSOTable" growing="true" growingThreshold="75" mode="MultiSelect"
+			       	selectionChange="rowSelectionDso" >
+				<items>
+					<ColumnListItem>
+						<cells>
+							<!--<Text text="{Vbeln}"/>-->
+							<Text text="{Kunnr}"/>
+							<Text text="{Name1}"/>
+							<!--<Text text="{Vtweg}"/>-->
+						</cells>
+					</ColumnListItem>
+				</items>
+				<columns>
+					<!--<Column width="120px">-->
+					<!--	<Label text="Order"/>-->
+					<!--</Column>-->
+					<Column width="150px">
+						<Label text="Sold to"/>
+					</Column>
+
+					<Column width="250px">
+						<Label text="Customer Name"/>
+					</Column>
+					
+				</columns>
+			</Table>
+					</content>
+			<beginButton>
+				<Button icon="sap-icon://accept" press="acceptDelvSO" type="Accept" tooltip="Select"/>
+			</beginButton>
+			<endButton text="test">
+				<Button icon="sap-icon://sys-cancel" press="cancelDelvSO" type="Reject" tooltip="close"/>
+			</endButton>
+		</Dialog>
+	</core:FragmentDefinition>

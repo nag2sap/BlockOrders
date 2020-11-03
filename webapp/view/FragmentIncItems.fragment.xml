@@ -1,0 +1,47 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="orders.ZSD_ORDERS.controller.Worklist">
+
+	<Dialog resizable="true" draggable="true" contentWidth="900px">
+		<content>
+			<Table items="{Iitems>/results}" id="myTable" growing="true" growingThreshold="100" 
+			       	selectionChange="rowSelectionord" >
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Link text="{Iitems>Vbeln}" href="{Iitems>Linkref}" target="_blank"/>
+							<Text text="{Iitems>Posnr}"/>
+							<Text text="{Iitems>Matnr}"/>
+							<Text text="{Iitems>Arktx}"/>
+							<Text text="{Iitems>Kwmeng}"/>
+							<Text text="{Iitems>Meins}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+				<columns>
+					<Column width="120px">
+						<Label text="Order"/>
+					</Column>
+					<Column width="100px">
+						<Label text="Item"/>
+					</Column>
+
+					<Column width="250px">
+						<Label text="Material"/>
+					</Column>
+					<Column width="150px">
+						<Label text="Material Descr"/>
+					</Column>
+					<Column width="150px">
+						<Label text="Order Qty"/>
+					</Column>	
+					<Column width="150px">
+						<Label text="UoM"/>
+					</Column>					
+				</columns>
+			</Table>
+
+			</content>
+			<endButton text="test">
+				<Button icon="sap-icon://sys-cancel" press="cancelItem" type="Reject" tooltip="close"/>
+			</endButton>
+		</Dialog>
+	</core:FragmentDefinition>
